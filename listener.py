@@ -2,10 +2,26 @@ import asyncio
 import aiopg
 import logging
 from TwitterAPI import TwitterAPI
-import json
 import base64
+import os
+from urllib.parse import urlparse
 
-dsn = 'dbname=yulduz user=yulduz password=yulduz host=127.0.0.1'
+postgres_url = os.getenv('DATABASE_URL', 'postgres://yulduz:yulduz@localhost:5432/yulduz')
+postgres = urlparse(postgres_url)
+
+dsn = """
+dbname={db_name}
+user={db_user}
+password={db_password}
+host={db_host}
+port={db_port}
+""".format(
+    db_name=postgres.path[1:],
+    db_user=postgres.username,
+    db_password=postgres.password,
+    db_host=postgres.hostname,
+    db_port=postgres.port)
+
 logger = logging.getLogger('asyncio')
 logging.basicConfig(level=logging.DEBUG)
 

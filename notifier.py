@@ -19,12 +19,15 @@ async def twitter_notify(conn):
     )
 
     async with conn.cursor() as cur:
-        r = api.request('statuses/filter', {'track': 'putin'})
+        r = api.request('statuses/filter', {'track': 'news'})
 
         for item in r:
-            obj = item['text'] if 'text' in item else item['username']
+
+            if 'text' not in item:
+                continue
+
+            obj = item['text']
             encoded_obj = base64.encodestring(obj.encode())
-            print(encoded_obj)
             await cur.execute("NOTIFY twitter, '{}'".format(encoded_obj.decode()))
 
 
